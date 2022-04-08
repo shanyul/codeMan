@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>二维码生成|shanyuliang</title>
+    <link rel="stylesheet" href="/static/js/lib/layui/css/layui.css">
+</head>
+<body>
+<div class="layui-container" style="padding-top: 50px;text-align: center;">
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <h2>二维码生成</h2>
+        </div>
+        <hr class="layui-border-cyan" style="padding-top: 50px;">
+        <div class="layui-col-xs12 layui-col-sm5 layui-col-md5">
+            <form class="layui-form layui-form-pane" action="">
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">输入内容</label>
+                    <div class="layui-input-block">
+                        <textarea name="content" placeholder="请输入要生成二维码的内容" class="layui-textarea" style="height: 300px;"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <button type="button" class="layui-btn layui-btn-warm" lay-submit lay-filter="formDemo">生成</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">清空</button>
+                </div>
+            </form>
+        </div>
+        <div class="layui-col-xs12 layui-col-sm2 layui-col-md2">
+            <div>
+                <button type="button" class="layui-btn layui-btn-primary layui-border-black">
+                    <i class="layui-icon layui-icon-next"></i>
+                </button>
+            </div>
+        </div>
+        <div class="layui-col-xs12 layui-col-sm5 layui-col-md5">
+            <fieldset class="layui-elem-field" style="height: 340px;">
+                <div class="layui-field-box">
+                    <img class="layui-upload-img" style="margin: 20px auto;" id="demo1">
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+<script src="/static/js/lib/layui/layui.js"></script>
+<script>
+    layui.use(['layer', 'jquery', 'form'], function(){
+        var layer = layui.layer;
+        var $ = layui.jquery;
+        var form = layui.form;
+
+        form.on('submit(formDemo)', function(data){
+            if(data.field.content === ''){
+                layer.msg('请输入生成内容');
+                return false
+            }
+            var loadIndex = layer.load(1)
+            getCode(data.field.content);
+            layer.close(loadIndex);
+            return false;
+        });
+
+        function getCode(content) {
+            $.post('/get-code', {content: content}, function (json){
+                if(json.code !== 200){
+                    layer.msg(json.msg);
+                    return false
+                }
+                $('#demo1').attr('src', json.data.code);
+            });
+        }
+    });
+</script>
+</body>
+</html>
